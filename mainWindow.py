@@ -1,8 +1,7 @@
 from ui.main import Ui_MainWindow
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+import os
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QStringListModel
 
 
 class mainWindow(QMainWindow,Ui_MainWindow):
@@ -77,7 +76,7 @@ class mainWindow(QMainWindow,Ui_MainWindow):
             if self.id in self.history_list:
                 self.id = ""
                 self.textEdit.setText("")
-                QMessageBox.critical(self, "Notice", "Already Registered")
+                os.system("mplayer ./audio/twice.mp3")
             else:
                 QMessageBox.information(self, "Notice", "Give out Mask for ID : "+self.id)
                 self.history_list.append(self.id)
