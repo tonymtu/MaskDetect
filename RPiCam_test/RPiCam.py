@@ -6,7 +6,7 @@ import base64
 import picamera
 from picamera.array import PiRGBArray
 
-IP = "192.168.1.102"
+IP = "192.168.8.100"
 
 camera = x.PiCamera()
 camera.resolution = (640,480)

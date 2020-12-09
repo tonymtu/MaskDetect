@@ -107,7 +107,7 @@ def response(text, qu):
             os.system("mplayer ./audio/noMask.mp3")
             servo.turn(500)
             time.sleep(10)
-            servo.turn_min(300)
+            servo.turn(100)
 
 
 if __name__ == "__main__":
