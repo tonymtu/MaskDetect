@@ -6,7 +6,7 @@ from motor import ServoDrive
 from baidu_api_lib.baidu_picture import baidu_picture_2_msg
                                                                                                     
 
-def detect_show(text, rate_, qu):
+def detect_show(text, rate, qu):
     print(text)
 
     APP_ID = "22901116"
@@ -16,7 +16,9 @@ def detect_show(text, rate_, qu):
 
     try:
         # 打开摄像头
-        capture = cv2.VideoCapture(0) 
+        capture = cv2.VideoCapture(0)
+        cv2.namedWindow("screen", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("screen", 1728, 972)
         
         size = 0
         mask_flag = 0
@@ -29,7 +31,6 @@ def detect_show(text, rate_, qu):
         
         while True:
             ret, frame = capture.read()
-            rate = rate_ # 帧率相关参数
             picture_time += 1
             
             if (picture_time % rate) == 1:
@@ -65,11 +66,11 @@ def detect_show(text, rate_, qu):
                         else:
                             cv2.rectangle(frame, left_top, right_bottom, (0,255,0),2)
                 
-                # size>=200才视为有效，一次成功后等待三秒
+                # size>=200才视为有效，一次成功后等待3秒，持续无口罩则多等5秒
                 if size>=200:
                     print("send :", send)
                     if not send:
-                        if time.time() - last > 3:
+                        if time.time() - last > 3-5*(mask_flag-1):
                             send = True
                     else:
                         if mask_flag == 0:
@@ -102,9 +103,9 @@ def response(text, qu):
         tmp = qu.get()
         print("--------{}---------".format(tmp))
         if tmp:
-            os.system("mplayer ./audio/pass.mp3")
+            os.system("mplayer -af volume=20 ./audio/pass.mp3")
         else:
-            os.system("mplayer ./audio/noMask.mp3")
+            os.system("mplayer -af volume=20 ./audio/noMask.mp3")
             servo.turn(500)
             time.sleep(10)
             servo.turn(100)
@@ -113,7 +114,7 @@ def response(text, qu):
 if __name__ == "__main__":
     q_respond = multiprocessing.Queue()
 
-    start_show = multiprocessing.Process(target=detect_show, args=("display system ready", 10, q_respond))
+    start_show = multiprocessing.Process(target=detect_show, args=("display system ready", 5, q_respond))
     responds = multiprocessing.Process(target=response, args=("launch response", q_respond))
 
     start_show.start()
